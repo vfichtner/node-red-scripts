@@ -1,0 +1,22 @@
+#!/bin/bash
+# parameter: mac address
+# return value: 'found' or 'not found'
+
+# extract ip from local arp table
+ip=$(arp | grep $1 | awk ' { print $1 } ')
+
+# found an ip tied to the mac address?
+if [ ! -z $ip ]; then
+
+    # if found, ping it
+    ip_resp=$(ping -c 3 -q $ip )
+    
+    if echo "$ip_resp" | grep -q " 0% packet loss"
+    then
+       echo "found"
+    else
+        echo "not found"
+    fi;
+else
+    echo "not found"
+fi;
